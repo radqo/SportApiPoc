@@ -1,4 +1,4 @@
-package sportapi
+package apiclient
 
 import (
 	"encoding/json"

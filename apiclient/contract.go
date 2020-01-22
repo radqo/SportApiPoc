@@ -1,4 +1,4 @@
-package sportapi
+package apiclient
 
 // PlayerInfo - contains player id and basic information
 type PlayerInfo struct {

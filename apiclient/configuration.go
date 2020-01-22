@@ -1,4 +1,4 @@
-package sportapi
+package apiclient
 
 // Configuration of sport api
 type Configuration struct {
