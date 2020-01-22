@@ -45,6 +45,7 @@ func (s *Server) GetPlayerInfo(w http.ResponseWriter, r *http.Request) {
 
 // Run - starts server
 func (s *Server) Run(port string) {
+	log.Println("Start server on port :" + port)
 	r := mux.NewRouter()
 
 	r.HandleFunc("/player/{surname}", s.GetPlayerInfo).Methods(http.MethodGet)
