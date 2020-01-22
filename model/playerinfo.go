@@ -13,6 +13,6 @@ type PlayerInfo struct {
 
 // PlayerInfoFinder - groups methods for player information search
 type PlayerInfoFinder interface {
-	FindPlayer(surname string) (palyers []PlayerInfo, err error)
+	FindPlayer(surname string) (palyers []PlayerInfo, err *APIError)
 	//GeAPIErrorics(playerID int)
 }

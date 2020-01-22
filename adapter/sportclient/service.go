@@ -2,10 +2,10 @@ package sportclient
 
 import (
 	"encoding/json"
+	"github.com/radqo/SportApiPoc/model"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"../../model"
 )
 
 // HTTPClient - interface used for http client
@@ -27,12 +27,12 @@ func NewService(c Configuration, client HTTPClient) model.PlayerInfoFinder {
 	return s
 }
 
-func (s *service) FindPlayer(surname string) (playerInfo []model.PlayerInfo, err error) {
+func (s *service) FindPlayer(surname string) (playerInfo []model.PlayerInfo, apiErr *model.APIError) {
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r)
-			err = &model.APIError{Code: 500, Message: "Error in api call"}
+			apiErr = &model.APIError{Code: 500, Message: "Error in api call"}
 			playerInfo = nil
 		}
 	}()
@@ -64,7 +64,13 @@ func (s *service) FindPlayer(surname string) (playerInfo []model.PlayerInfo, err
 	}
 
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
-		return parseResult(body)
+		res, err := parseResult(body)
+
+		if err != nil {
+			return nil, &model.APIError{Code: 500, Message: err.Error()}
+		}
+
+		return res, nil
 	}
 
 	return nil, &model.APIError{Code: res.StatusCode, Message: "External api error"}

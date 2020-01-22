@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/radqo/SportApiPoc/adapter/sportclient"
 	"net/http"
-	"time"
 	"os"
-	"../adapter/sportclient"
-
+	"time"
 )
 
 func main() {
@@ -20,19 +19,19 @@ func main() {
 
 	surname := os.Args[1]
 
-	fmt.Println("Find player : "+ surname)
+	fmt.Println("Find player : " + surname)
 
 	c := sportclient.CreateDemoConfiguration()
 
 	client := &http.Client{
-	 	Timeout: time.Duration(30) * time.Second,
-	 }
+		Timeout: time.Duration(30) * time.Second,
+	}
 
 	service := sportclient.NewService(c, client)
 
 	x, err := service.FindPlayer(surname)
 
-	if err!=nil {
+	if err != nil {
 		fmt.Println(err.Error())
 	} else {
 		fmt.Println(x)

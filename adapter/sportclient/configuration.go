@@ -6,7 +6,6 @@ type Configuration struct {
 	APIKEY string // ApiKey - api key
 }
 
-
 // CreateDemoConfiguration - creates configuration for demo server
 func CreateDemoConfiguration() Configuration {
 	return Configuration{
