@@ -1,4 +1,4 @@
-package apiclient
+package sportclient
 
 // Configuration of sport api
 type Configuration struct {

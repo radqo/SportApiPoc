@@ -1,10 +1,11 @@
-package apiclient
+package sportclient
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"../../model"
 )
 
 // HTTPClient - interface used for http client
@@ -18,7 +19,7 @@ type service struct {
 }
 
 // NewService - creates new instance of service
-func NewService(c Configuration, client HTTPClient) PlayerInfoFinder {
+func NewService(c Configuration, client HTTPClient) model.PlayerInfoFinder {
 	s := &service{
 		conf:   c,
 		client: client,
@@ -26,12 +27,12 @@ func NewService(c Configuration, client HTTPClient) PlayerInfoFinder {
 	return s
 }
 
-func (s *service) FindPlayer(surname string) (playerInfo []PlayerInfo, err error) {
+func (s *service) FindPlayer(surname string) (playerInfo []model.PlayerInfo, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r)
-			err = &APIError{Code: 500, Message: "Error in api call"}
+			err = &model.APIError{Code: 500, Message: "Error in api call"}
 			playerInfo = nil
 		}
 	}()
@@ -42,7 +43,7 @@ func (s *service) FindPlayer(surname string) (playerInfo []PlayerInfo, err error
 
 	if err != nil {
 		log.Println(err.Error())
-		return nil, &APIError{Code: 500, Message: "Error in request creation"}
+		return nil, &model.APIError{Code: 500, Message: "Error in request creation"}
 	}
 
 	req.Header.Add("x-rapidapi-key", s.conf.APIKEY)
@@ -51,7 +52,7 @@ func (s *service) FindPlayer(surname string) (playerInfo []PlayerInfo, err error
 
 	if err != nil {
 		log.Println(err.Error())
-		return nil, &APIError{Code: 500, Message: "Error in http call"}
+		return nil, &model.APIError{Code: 500, Message: "Error in http call"}
 	}
 
 	defer res.Body.Close()
@@ -59,14 +60,14 @@ func (s *service) FindPlayer(surname string) (playerInfo []PlayerInfo, err error
 
 	if err != nil {
 		log.Println(err.Error())
-		return nil, &APIError{Code: 500, Message: "Error reading body"}
+		return nil, &model.APIError{Code: 500, Message: "Error reading body"}
 	}
 
 	if res.StatusCode >= 200 && res.StatusCode <= 299 {
 		return parseResult(body)
 	}
 
-	return nil, &APIError{Code: res.StatusCode, Message: "External api error"}
+	return nil, &model.APIError{Code: res.StatusCode, Message: "External api error"}
 }
 
 type responseModel struct {
@@ -84,21 +85,21 @@ type responseModel struct {
 	}
 }
 
-func parseResult(body []byte) (playerInfo []PlayerInfo, err error) {
+func parseResult(body []byte) (playerInfo []model.PlayerInfo, err error) {
 
 	x := responseModel{}
 
 	err = json.Unmarshal(body, &x)
 
 	if err != nil {
-		return nil, &APIError{Code: 500, Message: "Unknown json format"}
+		return nil, &model.APIError{Code: 500, Message: "Unknown json format"}
 	}
 
-	info := []PlayerInfo{}
+	info := []model.PlayerInfo{}
 
 	for a := 0; a < x.Api.Results; a++ {
 		p := x.Api.Players[a]
-		info = append(info, PlayerInfo{
+		info = append(info, model.PlayerInfo{
 			ID:          p.Player_id,
 			FirstName:   p.Firstname,
 			LastName:    p.Lastname,
